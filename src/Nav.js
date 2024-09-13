@@ -4,7 +4,7 @@ const NavBar = () => {
 
     return ( 
         <nav className="navbar">
-            <h1 className="left">Merace</h1>
+            <h1 className="left">Merače</h1>
             <img src={logo} alt="ismart"/>
         </nav>
     );
