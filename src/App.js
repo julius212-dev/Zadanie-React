@@ -1,9 +1,7 @@
 import NavBar from "./Nav";
+import Box from "./Box"
 import {useEffect, useState} from 'react';
-
-function TimeFormat(time) {
-  return time.slice(8, 10) + '.' + time.slice(5, 7) + '.' + time.slice(0, 4) + ' ' + time.slice(11, 16);
-}
+import axios from 'axios';
 
 function App() {
 
@@ -24,49 +22,31 @@ function App() {
       'https://dev.energo.itsmart.sk:8081/api/data/actual/5'
     ]
 
-    fetch('https://dev.energo.itsmart.sk:8081/api/data/actual/1')
-      Promise.all(urls.map(url => fetch(url).then(res => res.json())))
-      .then(([data1, data2, data3, data4, data5]) => {
-        setData1(data1);
-        setData2(data2);
-        setData3(data3);
-        setData4(data4);
-        setData5(data5);
-      })
-  }, [])
+    Promise.all(urls.map(url => axios.get(url)))
+    .then(responses => {
+      setData1(responses[0].data);
+      setData2(responses[1].data);
+      setData3(responses[2].data);
+      setData4(responses[3].data);
+      setData5(responses[4].data);
+    })
+    .catch(error => {
+      console.error('Error fetching data:', error);
+    });
+  }, []);
 
   return (
     <div className="App">
       <NavBar/>
-      { data1 && <div className="main">
+      {data1 && <div className="main">
         <div className="kvalita">
-          <div className="box">
-            <h2>{data1.nazov}</h2>
-            <p>Hodnota: {data1.hodnota} {data1.jednotka}</p>
-            <p className="timestamp">Timestamp: {TimeFormat(data1.timestamp)}</p>
-          </div>
-          <div className="box">
-            <h2>{data2.nazov}</h2>
-            <p>Hodnota: {data2.hodnota} {data2.jednotka}</p>
-            <p className="timestamp">Timestamp: {TimeFormat(data2.timestamp)}</p>
-          </div>
+          <Box data={data1}/>
+          <Box data={data2}/>
         </div>
         <div className="spotreba">
-          <div className="box">
-            <h2>{data3.nazov}</h2>
-            <p>Hodnota: {data3.hodnota} {data3.jednotka}</p>
-            <p className="timestamp">Timestamp: {TimeFormat(data3.timestamp)}</p>
-          </div>
-          <div className="box">
-            <h2>{data4.nazov}</h2>
-            <p>Hodnota: {data4.hodnota} {data4.jednotka}</p>
-            <p className="timestamp">Timestamp: {TimeFormat(data4.timestamp)}</p>
-          </div>
-          <div className="box">
-            <h2>{data5.nazov}</h2>
-            <p>Hodnota: {data5.hodnota} {data5.jednotka}</p>
-            <p className="timestamp">Timestamp: {TimeFormat(data5.timestamp)}</p>
-          </div>
+          <Box data={data3}/>
+          <Box data={data4}/>
+          <Box data={data5}/>
         </div>
       </div>}
     </div>
